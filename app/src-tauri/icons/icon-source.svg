@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:serif="http://www.serif.com/">
+  <rect width="800" height="800" fill="#08141e"/>
+  <g transform="translate(400 400) scale(0.8) translate(-400 -400)">
+    <g transform="matrix(1,0,0,1,-3281,0)">
+      <g transform="matrix(0.797229,0,0,0.797229,2024.52,-429.835)">
+        <g transform="matrix(4.75058,0,0,4.03553,-1569.63,-1748.76)">
+          <path d="M814.326,745.646L822.949,654.382L833.843,661.216L834.603,759.386L814.326,745.646ZM776.692,764.223L803.084,623.251L816.716,633.17L802.478,783.86L776.692,764.223ZM689.882,747.099L768.258,580.04L799.003,600.275L760.908,803.755L689.882,747.099Z" fill="url(#gradient)"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  <defs>
+    <radialGradient id="gradient" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-0.839389,191.595,-143.834,-0.873242,769.017,601.106)">
+      <stop offset="0" stop-color="#30e4a1"/>
+      <stop offset="0.55" stop-color="#30cfb2"/>
+      <stop offset="1" stop-color="#3182f3"/>
+    </radialGradient>
+  </defs>
+</svg>

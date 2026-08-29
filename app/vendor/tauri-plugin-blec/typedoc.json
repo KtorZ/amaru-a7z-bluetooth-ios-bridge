@@ -1,0 +1,5 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPoints": ["./guest-js/index.ts"],
+    "highlightLanguages": ["toml", "typescript", "rust"]
+}

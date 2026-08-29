@@ -1,0 +1,28 @@
+[Unit]
+Description=Amaru mobile Bluetooth telemetry bridge
+Documentation=https://github.com/pragma-org/amaru-bluetooth-bridge
+After=amaru.service bluetooth.service
+Wants=amaru.service bluetooth.service
+
+[Service]
+Type=simple
+User=amaru
+Group=amaru
+SupplementaryGroups=bluetooth systemd-journal
+Environment=AMARU_NETWORK=mainnet
+Environment=AMARU_MOBILE_JOURNAL_UNIT=amaru.service
+# Set to false when nearby, unauthenticated host power-off is not acceptable.
+Environment=AMARU_MOBILE_ENABLE_POWER_OFF=true
+ExecStart=/usr/local/bin/amaru-mobile-telemetry
+Restart=on-failure
+RestartSec=5
+StateDirectory=amaru-mobile-telemetry
+NoNewPrivileges=true
+RestrictSUIDSGID=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

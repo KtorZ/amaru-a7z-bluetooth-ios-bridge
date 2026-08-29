@@ -1,0 +1,14 @@
+.DS_Store
+
+# Rust build outputs, including bridge CBOR test vectors.
+target/
+
+# Web and Tauri build outputs.
+node_modules/
+dist/
+src-tauri/target/
+src-tauri/gen/
+
+# IDE files.
+.idea/
+*~

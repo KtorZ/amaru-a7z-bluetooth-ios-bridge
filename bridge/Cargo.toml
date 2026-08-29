@@ -1,0 +1,58 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "amaru-mobile-telemetry"
+version = "0.1.0"
+edition = "2024"
+description = "Bluetooth Low Energy telemetry projection for a local Amaru node"
+license = "Apache-2.0"
+rust-version = "1.97"
+publish = false
+
+[features]
+# Builds libdbus from source so a musl target does not depend on the host's shared library.
+vendored-dbus = ["dep:dbus"]
+
+[dependencies]
+anyhow = "1.0.104"
+amaru-observability = { git = "https://github.com/KtorZ/amaru", branch = "experiments-mobile" }
+clap = { version = "4.6.2", features = ["derive"] }
+minicbor = { version = "0.25.1", features = ["std", "derive"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+sysinfo = "0.39.6"
+tokio = { version = "1.53.0", features = ["fs", "io-util", "macros", "net", "process", "rt-multi-thread", "signal", "sync", "time"] }
+uuid = "1.22.0"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+bluer = { version = "0.17.4", features = ["bluetoothd"] }
+dbus = { version = "0.9.12", features = ["vendored"], optional = true }
+
+[lints.rust]
+rust_2018_idioms = "warn"
+rust_2018_compatibility = "warn"
+rust_2021_compatibility = "warn"
+nonstandard_style = { level = "deny" }
+future_incompatible = { level = "deny" }
+
+[lints.clippy]
+expect_used = "warn"
+panic = "warn"
+todo = "warn"
+unwrap_used = "warn"
+wildcard_enum_match_arm = "warn"
+print_stdout = "deny"
+
+[profile.dev]
+opt-level = 2
+debug = false
+
+[profile.dev-debug]
+inherits = "dev"
+opt-level = 0
+debug = true
+
+[profile.release]
+lto = true
+codegen-units = 1

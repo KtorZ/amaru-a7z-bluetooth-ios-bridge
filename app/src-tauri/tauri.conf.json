@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Amaru Mobile",
+  "version": "1.0.0",
+  "identifier": "io.pragma.amaru",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Amaru",
+        "width": 430,
+        "height": 900,
+        "resizable": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "category": "Utility",
+    "icon": ["icons/icon.png"],
+    "iOS": {
+      "developmentTeam": "L8QX522985",
+      "minimumSystemVersion": "15.0",
+      "template": "src-tauri/ios-project.yml"
+    }
+  }
+}

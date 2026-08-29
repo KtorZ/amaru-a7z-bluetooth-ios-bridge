@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "./target/golden",
+    "rootDir": "./src"
+  },
+  "include": ["src/protocol.ts", "src/protocol.golden.test.ts"]
+}

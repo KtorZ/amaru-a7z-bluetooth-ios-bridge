@@ -1,0 +1,7 @@
+[Unit]
+Description=Power off the host on request from Amaru Mobile
+Documentation=https://github.com/pragma-org/amaru-bluetooth-bridge
+
+[Service]
+Type=oneshot
+ExecStart=/bin/systemctl --no-block poweroff

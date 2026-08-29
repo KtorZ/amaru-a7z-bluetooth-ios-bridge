@@ -1,0 +1,94 @@
+name: {{app.name}}
+options:
+  bundleIdPrefix: {{app.identifier}}
+  deploymentTarget:
+    iOS: {{apple.ios-version}}
+fileGroups: [{{join file-groups}}]
+configs:
+  debug: debug
+  release: release
+settingGroups:
+  app:
+    base:
+      PRODUCT_NAME: {{app.stylized-name}}
+      PRODUCT_BUNDLE_IDENTIFIER: {{app.identifier}}
+      {{#if apple.development-team}}
+      DEVELOPMENT_TEAM: {{apple.development-team}}
+      {{/if}}
+targetTemplates:
+  app:
+    type: application
+    sources:
+      - path: Sources
+    scheme:
+      environmentVariables:
+        RUST_BACKTRACE: full
+        RUST_LOG: info
+    settings:
+      groups: [app]
+targets:
+  {{app.name}}_iOS:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+      # Tauri does not propagate bundle.icon into its generated mobile catalog.
+      - path: ../../Assets.xcassets
+      # The Rust static library is linked through `dependencies` below. Adding
+      # `Externals` here would copy libapp.a into the app bundle.
+      - path: {{app.name}}_iOS
+      - path: {{app.asset-dir}}
+        buildPhase: resources
+        type: folder
+      - path: LaunchScreen.storyboard
+    info:
+      path: {{app.name}}_iOS/Info.plist
+      properties:
+        LSRequiresIPhoneOS: true
+        UILaunchStoryboardName: LaunchScreen
+        UIRequiredDeviceCapabilities: [arm64, metal]
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        CFBundleShortVersionString: {{apple.bundle-version-short}}
+        CFBundleVersion: "{{apple.bundle-version}}"
+    entitlements:
+      path: {{app.name}}_iOS/{{app.name}}_iOS.entitlements
+    scheme:
+      environmentVariables:
+        RUST_BACKTRACE: full
+        RUST_LOG: info
+    settings:
+      base:
+        ENABLE_BITCODE: false
+        ARCHS: [{{join ios-valid-archs}}]
+        VALID_ARCHS: {{#each ios-valid-archs}} {{this}} {{/each}}
+        LIBRARY_SEARCH_PATHS[arch=x86_64]: $(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME) $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)
+        LIBRARY_SEARCH_PATHS[arch=arm64]: $(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME) $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)
+        ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: true
+        EXCLUDED_ARCHS[sdk=iphoneos*]: x86_64
+      groups: [app]
+    dependencies:
+      - framework: {{lib-output-file-name}}
+        embed: false
+      - sdk: CoreBluetooth.framework
+      - sdk: CoreGraphics.framework
+      - sdk: Metal.framework
+      - sdk: MetalKit.framework
+      - sdk: QuartzCore.framework
+      - sdk: Security.framework
+      - sdk: UIKit.framework
+      - sdk: WebKit.framework
+    preBuildScripts:
+      - script: {{ tauri-binary }} {{ tauri-binary-args-str }} -v --platform ${PLATFORM_DISPLAY_NAME:?} --sdk-root ${SDKROOT:?} --framework-search-paths "${FRAMEWORK_SEARCH_PATHS:?}" --header-search-paths "${HEADER_SEARCH_PATHS:?}" --gcc-preprocessor-definitions "${GCC_PREPROCESSOR_DEFINITIONS:-}" --configuration ${CONFIGURATION:?} ${FORCE_COLOR} ${ARCHS:?}
+        name: Build Rust Code
+        basedOnDependencyAnalysis: false
+        outputFiles:
+          - $(SRCROOT)/Externals/x86_64/${CONFIGURATION}/{{ lib-output-file-name }}
+          - $(SRCROOT)/Externals/arm64/${CONFIGURATION}/{{ lib-output-file-name }}

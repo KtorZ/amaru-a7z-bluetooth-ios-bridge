@@ -1,0 +1,7 @@
+# Keep the standalone bridge aligned with Amaru's compiler setup.
+
+[build]
+rustflags = [
+  "-Zshare-generics",
+  "-Zthreads=8",
+]

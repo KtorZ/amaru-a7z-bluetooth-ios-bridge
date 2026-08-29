@@ -1,0 +1,242 @@
+package com.plugin.blec
+
+
+import Peripheral
+import android.app.Activity
+import app.tauri.annotation.Command
+import app.tauri.annotation.InvokeArg
+import app.tauri.annotation.TauriPlugin
+import app.tauri.plugin.Channel
+import app.tauri.plugin.Invoke
+import app.tauri.plugin.JSObject
+import app.tauri.plugin.Plugin
+import java.util.UUID
+
+
+@InvokeArg
+class ConnectParams{
+    val address: String = ""
+}
+
+@TauriPlugin
+class BleClientPlugin(private val activity: Activity): Plugin(activity) {
+    var devices: MutableMap<String, Peripheral> = mutableMapOf();
+    var connected_devices: MutableMap<String, Peripheral> = mutableMapOf();
+    var eventChannel: Channel? = null;
+    private val client = BleClient(activity,this)
+    
+    @Command
+    fun clear_devices(invoke: Invoke){
+        this.devices.clear()
+        invoke.resolve()
+    }
+
+    @Command
+    fun start_scan(invoke: Invoke) {
+        client.startScan(invoke)
+    }
+
+    @Command
+    fun stop_scan(invoke: Invoke){
+        client.stopScan(invoke)
+    }
+
+    @Command
+    fun events(invoke: Invoke){
+        this.eventChannel = invoke.parseArgs(Channel::class.java)
+        invoke.resolve()
+    }
+
+    @Command
+    fun connect(invoke: Invoke){
+        val args = invoke.parseArgs(ConnectParams::class.java)
+        val device = this.devices[args.address]
+        if (device == null){
+            invoke.reject("connect: device '${args.address}' not found in discovered devices (known: ${this.devices.keys})")
+            return
+        }
+        this.connected_devices[args.address] = device;
+        device.connect(invoke)
+    }
+
+    @Command
+    fun disconnect(invoke: Invoke){
+        val args = invoke.parseArgs(ConnectParams::class.java)
+        val device = this.connected_devices[args.address]
+        if (device == null){
+            invoke.reject("disconnect: device '${args.address}' not in connected devices (connected: ${this.connected_devices.keys})")
+            return
+        }
+        this.connected_devices.remove(args.address)
+        device.disconnect(invoke)
+    }
+
+    @Command
+    fun is_connected(invoke: Invoke){
+        val args = invoke.parseArgs(ConnectParams::class.java)
+        val device = this.connected_devices[args.address]
+        val res = JSObject()
+        if (device == null){
+            res.put("result", false)
+        } else {
+            res.put("result",device.isConnected())
+        }
+        invoke.resolve(res)
+    }
+
+    @Command
+    fun is_bonded(invoke: Invoke){
+        val args = invoke.parseArgs(ConnectParams::class.java)
+        val device = this.devices[args.address]
+        val res = JSObject()
+        if (device == null){
+            res.put("result", false)
+        } else {
+            res.put("result", device.isBonded())
+        }
+        invoke.resolve(res)
+    }
+
+    @Command
+    fun discover_services(invoke:Invoke){
+        val args = invoke.parseArgs(ConnectParams::class.java)
+        val device = this.connected_devices[args.address]
+        if (device == null){
+            invoke.reject("discover_services: device '${args.address}' not in connected devices (connected: ${this.connected_devices.keys})")
+            return
+        }
+        device.discoverServices(invoke)
+    }
+
+    @Command
+    fun services(invoke:Invoke){
+        val args = invoke.parseArgs(ConnectParams::class.java)
+        val device = this.connected_devices[args.address]
+        if (device == null){
+            invoke.reject("services: device '${args.address}' not in connected devices (connected: ${this.connected_devices.keys})")
+            return
+        }
+        device.services(invoke)
+    }
+
+    @InvokeArg
+    class NotifyParams () {
+        var address: String = ""
+        var channel: Channel? = null
+    }
+
+    @Command
+    fun notifications(invoke:Invoke){
+        val args = invoke.parseArgs(NotifyParams::class.java)
+        val device = this.connected_devices[args.address]
+        if (device == null){
+            invoke.reject("notifications: device '${args.address}' not in connected devices (connected: ${this.connected_devices.keys})")
+            return
+        }
+        device.setNotifyChannel(args.channel!!)
+        invoke.resolve()
+    }
+
+    @InvokeArg
+    class WriteParams() {
+        val address: String = ""
+        val characteristic: UUID? = null
+        val service: UUID? = null
+        val data: ByteArray? = null
+        val withResponse: Boolean = true
+        
+        // if a write times out, we will not write the data
+        // a timeout of 0 means no timeout
+        val timeout: Int = 0
+        
+        // if true, we will enqueue the write and immediately return;
+        // the write is guaranteed to be sent, if the connection persists,
+        // but the plugin won't know when it has happened
+        val skipWaitingForWriteToComplete: Boolean = false
+    }
+    
+    @Command
+    fun write(invoke:Invoke){
+        val args = invoke.parseArgs(WriteParams::class.java)
+        val device = this.connected_devices[args.address]
+        if (device == null){
+            invoke.reject("write: device '${args.address}' not in connected devices (connected: ${this.connected_devices.keys})")
+            return
+        }
+        device.write(invoke, args)
+    }
+
+    @InvokeArg
+    class ReadParams(){
+        val address: String = ""
+        val characteristic: UUID? = null
+        val service: UUID? = null
+    }
+    @Command
+    fun read(invoke: Invoke){
+        val args = invoke.parseArgs(ReadParams::class.java)
+        val device = this.connected_devices[args.address]
+        if (device == null){
+            invoke.reject("read: device '${args.address}' not in connected devices (connected: ${this.connected_devices.keys})")
+            return
+        }
+        device.read(invoke)
+    }
+
+    @Command
+    fun subscribe(invoke: Invoke){
+        val args = invoke.parseArgs(ReadParams::class.java)
+        val device = this.connected_devices[args.address]
+        if (device == null){
+            invoke.reject("subscribe: device '${args.address}' not in connected devices (connected: ${this.connected_devices.keys})")
+            return
+        }
+        device.subscribe(invoke,true)
+    }
+
+    @Command
+    fun unsubscribe(invoke: Invoke){
+        val args = invoke.parseArgs(ReadParams::class.java)
+        val device = this.connected_devices[args.address]
+        if (device == null){
+            invoke.reject("unsubscribe: device '${args.address}' not in connected devices (connected: ${this.connected_devices.keys})")
+            return
+        }
+        device.subscribe(invoke,false)
+    }
+
+    @InvokeArg
+    class CheckPermissionsParams(){
+        val allowIbeacons: Boolean = false
+        val askIfDenied: Boolean = false
+    }
+    @Command
+    fun check_permissions(invoke: Invoke){
+        val args = invoke.parseArgs(CheckPermissionsParams::class.java)
+        val granted = client.checkPermissions(args.allowIbeacons, args.askIfDenied);
+        val ret = JSObject();
+        ret.put("result",granted)
+        invoke.resolve(ret);
+    }
+
+    @InvokeArg
+    class MtuParams(){
+        val address: String = ""
+        val mtu: Int = 517
+    }
+    @Command
+    fun request_mtu(invoke: Invoke){
+        val args = invoke.parseArgs(MtuParams::class.java)
+        val device = this.connected_devices[args.address]
+        if (device == null){
+            invoke.reject("request_mtu: device '${args.address}' not in connected devices (connected: ${this.connected_devices.keys})")
+            return
+        }
+        device.requestMtu(invoke, args.mtu)
+    }
+
+    @Command
+    fun adapter_state(invoke: Invoke){
+        client.adapterState(invoke);
+    }
+}

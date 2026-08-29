@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 800 800" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-3281,0)">
+        <g id="Logo-Mark-Light-Background" serif:id="Logo Mark Light Background" transform="matrix(0.797229,0,0,0.797229,2024.52,-429.835)">
+            <rect x="1576.06" y="539.161" width="1003.48" height="1003.48" style="fill:transparent"/>
+            <g transform="matrix(4.75058,0,0,4.03553,-1569.63,-1748.76)">
+                <g id="Logo">
+                    <path d="M814.326,745.646L822.949,654.382L833.843,661.216L834.603,759.386L814.326,745.646ZM776.692,764.223L803.084,623.251L816.716,633.17L802.478,783.86L776.692,764.223ZM689.882,747.099L768.258,580.04L799.003,600.275L760.908,803.755L689.882,747.099Z" style="fill:url(#_Radial1);"/>
+                </g>
+            </g>
+        </g>
+    </g>
+    <defs>
+        <radialGradient id="_Radial1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-0.839389,191.595,-143.834,-0.873242,769.017,601.106)"><stop offset="0" style="stop-color:rgb(48,228,161);stop-opacity:1"/><stop offset="0.55" style="stop-color:rgb(48,207,178);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(49,130,243);stop-opacity:1"/></radialGradient>
+    </defs>
+</svg>

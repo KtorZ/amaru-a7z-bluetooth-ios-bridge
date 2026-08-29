@@ -1,0 +1,26 @@
+{
+  "name": "amaru-mobile",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "generate:icons": "node scripts/generate-icons.mjs",
+    "predev": "npm run generate:icons",
+    "prebuild": "npm run generate:icons",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test": "cargo test --manifest-path ../bridge/Cargo.toml golden_snapshots && tsc --project tsconfig.golden.json && node --test test/protocol.golden.test.mjs",
+    "tauri": "tauri",
+    "release": "tauri ios build --export-method release-testing"
+  },
+  "dependencies": {
+    "@mnlphlp/plugin-blec": "0.12.0",
+    "@tauri-apps/api": "2.11.1",
+    "cbor-x": "1.6.6"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4",
+    "typescript": "5.9.3",
+    "vite": "7.3.6"
+  }
+}

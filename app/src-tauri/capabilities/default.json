@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/mobile-schema.json",
+  "identifier": "default",
+  "description": "Permissions required by the Amaru Bluetooth dashboard.",
+  "windows": ["main"],
+  "permissions": ["core:default", "blec:default"]
+}

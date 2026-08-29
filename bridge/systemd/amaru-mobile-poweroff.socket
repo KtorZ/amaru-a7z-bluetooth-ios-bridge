@@ -1,0 +1,13 @@
+[Unit]
+Description=Power-off request socket for Amaru Mobile
+Documentation=https://github.com/pragma-org/amaru-bluetooth-bridge
+
+[Socket]
+ListenDatagram=/run/amaru-mobile-poweroff.sock
+SocketUser=amaru
+SocketGroup=amaru
+SocketMode=0600
+RemoveOnStop=true
+
+[Install]
+WantedBy=sockets.target
