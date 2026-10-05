@@ -16,7 +16,7 @@ vendored-dbus = ["dep:dbus"]
 
 [dependencies]
 anyhow = "1.0.104"
-amaru-observability = { git = "https://github.com/KtorZ/amaru", branch = "experiments-mobile" }
+amaru-observability = { git = "https://github.com/pragma-org/amaru", branch = "main" }
 clap = { version = "4.6.2", features = ["derive"] }
 minicbor = { version = "0.25.1", features = ["std", "derive"] }
 serde = { version = "1.0.229", features = ["derive"] }
