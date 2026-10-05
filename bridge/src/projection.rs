@@ -33,6 +33,11 @@ const RECENT_ROLLBACK_LIMIT: usize = 100;
 const ROLLBACK_WINDOW: Duration = Duration::from_secs(600);
 const SEEN_SPAN_LIMIT: usize = 4_096;
 const RATE_SMOOTHING: usize = 10;
+/// Cardano networks use a 5% active slot coefficient.
+///
+/// The ledger trace reports observed blocks per slot; the dashboard reports
+/// chain density relative to the expected active-slot rate.
+const ACTIVE_SLOT_COEFFICIENT_INVERSE: f64 = 20.0;
 
 /// Compact resource values sampled locally from the running Amaru process.
 ///
@@ -378,7 +383,7 @@ fn tip(record: &Record) -> Option<Tip> {
         block_height: record.u64(ledger::tip::UPDATE::FIELD_BLOCK_HEIGHT)?,
         epoch: record.u64(ledger::tip::UPDATE::FIELD_EPOCH)?,
         slot_in_epoch: record.u64(ledger::tip::UPDATE::FIELD_SLOT_IN_EPOCH)?,
-        density: record.f64(ledger::tip::UPDATE::FIELD_DENSITY)?,
+        density: record.f64(ledger::tip::UPDATE::FIELD_DENSITY)? * ACTIVE_SLOT_COEFFICIENT_INVERSE,
         tx_count: record.u64(ledger::tip::UPDATE::FIELD_TX_COUNT)?,
     })
 }
@@ -487,6 +492,7 @@ mod tests {
         let tip = projection.tip().expect("tip");
         assert_eq!(tip.slot, 100);
         assert_eq!(tip.header_hash, "abc-4");
+        assert_eq!(tip.density, 1.0);
     }
 
     #[test]

@@ -426,7 +426,7 @@ mod tests {
                 block_height: 9_876_543,
                 epoch: 612,
                 slot_in_epoch: 345_678,
-                density: 0.05,
+                density: 1.0,
                 tx_count: 42,
             }),
             chain_quality: ChainQualityWire {

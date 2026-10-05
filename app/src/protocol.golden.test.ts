@@ -38,7 +38,7 @@ export function assertFullSnapshot(bytes: Uint8Array): void {
   equal(tip.blockHeight, 9_876_543, "tip.block_height");
   equal(tip.epoch, 612, "tip.epoch");
   equal(tip.slotInEpoch, 345_678, "tip.slot_in_epoch");
-  equal(tip.density, 0.05, "tip.density");
+  equal(tip.density, 1, "tip.density");
   equal(tip.transactionCount, 42, "tip.tx_count");
 
   equal(snapshot.chainQuality.averageRollbackLength, 1.75, "chain_quality.average_rollback_length");
